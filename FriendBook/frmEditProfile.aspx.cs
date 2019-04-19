@@ -56,30 +56,40 @@ namespace FriendBook
         
         private void UpdateProfile()
         {
-            string sql = "UPDATE Users SET [Password]=@pw, Age=@age, City=@city WHERE refUser=@refU";
-            OleDbCommand myCmd = new OleDbCommand(sql, myCon);
-            myCmd.Parameters.AddWithValue("refU", refU);
-            myCmd.Parameters.AddWithValue("pw", txtPasswordRe.Text);
-            myCmd.Parameters.AddWithValue("age", Convert.ToInt32(txtAge.Text));
-            myCmd.Parameters.AddWithValue("city", cboCity.SelectedValue.ToString());
-            int query = myCmd.ExecuteNonQuery();
-            lblError.Text = "Updated Successfully!";
+            try
+            {
+                string sql = "UPDATE Users SET [Password]=@pw, Age=@age, City=@city WHERE refUser=@refU";
+                OleDbCommand myCmd = new OleDbCommand(sql, myCon);  
+                //Make sure to put the parameters in order
+                myCmd.Parameters.AddWithValue("pw", txtPasswordRe.Text);
+                myCmd.Parameters.AddWithValue("age", Convert.ToInt32(txtAge.Text));
+                myCmd.Parameters.AddWithValue("city", cboCity.Text);
+                myCmd.Parameters.AddWithValue("refU", refU);
+                int query = myCmd.ExecuteNonQuery();
+                if (query > 0)
+                {
+                    lblError.Text = "Updated Successfully!";
+                }
+                else
+                {
+                    lblError.Text = "Update Failed!";
+                }
+            }
+            catch (OleDbException ex)
+            {
+                lblError.Text = ex.Message.ToString();
+               
+            }
+            
+            
+
             
         }
 
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
-            OleDbCommand myCmd = new OleDbCommand("UPDATE Users SET [Password]=@pw, Age=@age, City=@city WHERE refUser=@refU", myCon);
-            myCmd.Parameters.AddWithValue("refU", refU);
-            myCmd.Parameters.AddWithValue("pw", txtPasswordRe.Text);
-            myCmd.Parameters.AddWithValue("age", Convert.ToInt32(txtAge.Text));
-            myCmd.Parameters.AddWithValue("city", cboCity.SelectedValue.ToString());
-            int query = myCmd.ExecuteNonQuery();
-            if (query > 0)
-            {
-                lblError.Text = "Updated Successfully!";
-            }
-
+            UpdateProfile();
+            
         }
 
         protected void btnCancel_Click(object sender, EventArgs e)
